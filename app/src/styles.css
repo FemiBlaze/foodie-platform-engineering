@@ -1,0 +1,355 @@
+:root {
+  --green: #1faa59;
+  --green-dark: #128244;
+  --black: #0f1111;
+  --white: #ffffff;
+  --soft-white: #f5f8f4;
+  --line: rgba(255, 255, 255, 0.12);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--white);
+  background:
+    radial-gradient(circle at top left, rgba(31, 170, 89, 0.28), transparent 32%),
+    linear-gradient(135deg, #08110b 0%, #0f1111 45%, #17351f 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell,
+.dashboard-shell {
+  min-height: 100vh;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
+.hero-panel,
+.login-panel {
+  padding: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-panel {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 18px;
+}
+
+.brand-mark {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, var(--green), #34d27b);
+  color: var(--black);
+  font-size: 2rem;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
+.eyebrow,
+.card-label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.76rem;
+  color: #9ae1b7;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2.7rem, 5vw, 4.8rem);
+  line-height: 0.95;
+}
+
+.hero-copy,
+.card-copy {
+  max-width: 520px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.credential-board {
+  width: min(100%, 520px);
+  margin-top: 18px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+}
+
+.credential-board h2 {
+  margin-bottom: 18px;
+}
+
+.user-card {
+  display: grid;
+  gap: 6px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-card:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.user-name {
+  color: #8ff0b7;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.login-panel {
+  justify-content: center;
+}
+
+.login-card {
+  width: min(100%, 430px);
+  padding: 36px;
+  border-radius: 30px;
+  background: var(--soft-white);
+  color: var(--black);
+  box-shadow: var(--shadow);
+}
+
+.login-card h2 {
+  margin-top: 10px;
+  font-size: 2rem;
+}
+
+.login-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.login-form label {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(15, 17, 17, 0.14);
+  border-radius: 14px;
+  background: var(--white);
+}
+
+.login-form input:focus {
+  outline: 2px solid rgba(31, 170, 89, 0.32);
+  border-color: var(--green);
+}
+
+.login-form button {
+  margin-top: 6px;
+  padding: 15px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: var(--white);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.login-form button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(18, 130, 68, 0.28);
+}
+
+.message {
+  min-height: 24px;
+  margin-top: 18px;
+  font-weight: 600;
+}
+
+.message.success {
+  color: var(--green-dark);
+}
+
+.message.error {
+  color: #d63c3c;
+}
+
+.dashboard-shell {
+  padding: 40px;
+}
+
+.dashboard-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 32px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow);
+}
+
+.dashboard-title {
+  margin-top: 8px;
+  font-size: clamp(2.4rem, 4vw, 4rem);
+}
+
+.logout-button {
+  padding: 12px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--white);
+  cursor: pointer;
+}
+
+.stats-panel {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.stat-card {
+  padding: 22px;
+  border-radius: 24px;
+  background: var(--soft-white);
+  color: var(--black);
+  box-shadow: var(--shadow);
+}
+
+.stat-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.stat-label {
+  display: block;
+  margin-top: 6px;
+  color: rgba(15, 17, 17, 0.7);
+}
+
+.restaurant-section {
+  margin-top: 28px;
+}
+
+.section-heading h2 {
+  margin-top: 8px;
+  font-size: 2rem;
+}
+
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.restaurant-card {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: var(--shadow);
+}
+
+.restaurant-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.restaurant-badge,
+.restaurant-eta {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+.restaurant-badge {
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: var(--white);
+}
+
+.restaurant-eta {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.restaurant-card h3 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.restaurant-copy {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.menu-list {
+  margin: 18px 0 0;
+  padding-left: 20px;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.8;
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-shell {
+    padding: 20px;
+  }
+
+  .hero-panel,
+  .login-panel {
+    padding: 28px 20px;
+  }
+
+  .login-panel {
+    padding-top: 0;
+  }
+
+  .login-card {
+    width: 100%;
+  }
+
+  .dashboard-hero {
+    flex-direction: column;
+  }
+
+  .stats-panel,
+  .restaurant-grid {
+    grid-template-columns: 1fr;
+  }
+}
