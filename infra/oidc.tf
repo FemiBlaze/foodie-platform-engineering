@@ -28,8 +28,11 @@ resource "aws_iam_role" "github_actions" {
         },
         Action = "sts:AssumeRoleWithWebIdentity",
         Condition = {
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+          }
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = local.github_oidc_subject
+            "token.actions.githubusercontent.com:sub" = "repo:${var.github_repo_owner}/${var.github_repo_name}:"
           }
         }
       }
@@ -37,37 +40,57 @@ resource "aws_iam_role" "github_actions" {
   })
 }
 
-resource "aws_iam_policy" "github_actions_policy" {
-  name = var.github_oidc_policy_name
+resource "aws_iam_policy" "ecs_deploy" {
+  name = "github-actions-ecs-deploy-policy"
 
   policy = jsonencode({
-    Version = "2012-10-17",
+    Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow",
+        Effect = "Allow"
         Action = [
-          "ecr:GetAuthorizationToken",
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:PutImage",
-          "ecr:InitiateLayerUpload",
-          "ecr:UploadLayerPart",
-          "ecr:CompleteLayerUpload"
-        ],
-        Resource = "*"
-      },
-      {
-        Effect = "Allow",
-        Action = [
+          "ecs:DescribeTaskDefinition",
+          "ecs:RegisterTaskDefinition",
           "ecs:UpdateService",
           "ecs:DescribeServices"
-        ],
+        ]
         Resource = "*"
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "github_actions_attachment" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_policy.arn
+resource "aws_iam_policy" "ecr_push" {
+  name = "github-actions-ecr-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:CompleteLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:InitiateLayerUpload",
+          "ecr:PutImage",
+          "ecr:BatchGetImage"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
+
+resource "aws_iam_role_policy_attachment" "ecs_attach" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.ecs_deploy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_attach" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.ecr_push.arn
+}
+
+# Note: github_actions_policy was removed - it duplicated ecs_deploy and ecr_push permissions
