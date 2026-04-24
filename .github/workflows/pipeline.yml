@@ -48,17 +48,17 @@ jobs:
       - name: Run Gitleaks
         uses: zricethezav/gitleaks-action@v2
 
-      - name: Install Dependencies
-        run: npm install
-        working-directory: app
+      # - name: Install Dependencies
+      #   run: npm install
+      #   working-directory: app
 
       - name: Run Snyk
-        uses: snyk/actions/node@master
-        with:
-          command: test --severity-threshold=high
+        run: |
+          cd app
+          npm install
+          npx snyk test --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        working-directory: app
 
       - name: Login to Amazon ECR
         id: login-ecr
