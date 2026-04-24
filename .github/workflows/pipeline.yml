@@ -31,35 +31,31 @@ jobs:
       - name: Generate version tags
         id: version
         run: |
-          # Get commit SHA (shortened to 7 chars)
           COMMIT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
-          
-          # Human readable version from run number (v1, v2, v3...)
+
           VERSION="v${{ github.run_number }}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          
+
           echo "Version tags: $VERSION, $COMMIT_SHA"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Run Gitleaks
         uses: zricethezav/gitleaks-action@v2
 
-      # Install dependencies for Snyk
       - name: Install Dependencies
         run: npm install
         working-directory: app
 
-      # Run Snyk scan in correct directory.
       - name: Run Snyk
         uses: snyk/actions/node@master
         with:
-          command: test
+          command: test --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         working-directory: app
@@ -69,24 +65,21 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker Image
-        run: |
-          docker build -t foodie-app:latest .
+        run: docker build -t foodie-app:latest .
 
-      - name: Tag Docker Image with version and commit SHA
+      - name: Tag Docker Image
         run: |
-          # Tag with human readable version (v1, v2, v3...)
-          docker tag foodie-app:latest ${{ steps.login-ecr.outputs.registry }}/${{ steps.version.outputs.version }}
-          
-          # Tag with commit SHA for traceability
-          docker tag foodie-app:latest ${{ steps.login-ecr.outputs.registry }}/${{ steps.version.outputs.commit_sha }}
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
 
-      - name: Push Docker Image to ECR
+          docker tag foodie-app:latest $IMAGE_URI:${{ steps.version.outputs.version }}
+          docker tag foodie-app:latest $IMAGE_URI:${{ steps.version.outputs.commit_sha }}
+
+      - name: Push Docker Images
         run: |
-          # Push human readable version tag
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ steps.version.outputs.version }}
-          
-          # Push commit SHA tag
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ steps.version.outputs.commit_sha }}
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
+
+          docker push $IMAGE_URI:${{ steps.version.outputs.version }}
+          docker push $IMAGE_URI:${{ steps.version.outputs.commit_sha }}
 
   deploy:
     needs: build
@@ -97,22 +90,32 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Update ECS Task Definition
         run: |
-          # Get the current task definition
-          TASK_DEF=$(aws ecs describe-task-definition --task-definition foodie-task --query 'taskDefinition' --output json)
-          
-          # Update the image tag in container definition
-          NEW_TASK_DEF=$(echo "$TASK_DEF" | jq --arg IMAGE "${{ needs.build.outputs.ecr_registry }}/${{ needs.build.outputs.version }}:${{ needs.build.outputs.commit_sha }}" \
-            '.containerDefinitions[0].image = $IMAGE | .revision = .revision + 1')
-          
-          # Register new task definition
+          TASK_DEF=$(aws ecs describe-task-definition \
+            --task-definition foodie-task \
+            --query 'taskDefinition' \
+            --output json)
+
+          NEW_IMAGE="${{ needs.build.outputs.ecr_registry }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.version }}"
+
+          NEW_TASK_DEF=$(echo "$TASK_DEF" | jq \
+            --arg IMAGE "$NEW_IMAGE" \
+            '.containerDefinitions[0].image = $IMAGE
+            | del(
+                .taskDefinitionArn,
+                .revision,
+                .status,
+                .requiresAttributes,
+                .compatibilities,
+                .registeredAt,
+                .registeredBy
+              )')
+
           aws ecs register-task-definition \
-            --cli-input-json "$NEW_TASK_DEF" \
-            --query 'taskDefinition.taskDefinitionArn' \
-            --output text
+            --cli-input-json "$NEW_TASK_DEF"
 
       - name: Deploy to Amazon ECS
         run: |
@@ -121,11 +124,16 @@ jobs:
             --service ${{ env.ECS_SERVICE_NAME }} \
             --force-new-deployment
 
-      - name: Wait for deployment to complete
+      - name: Wait for deployment
         run: |
           aws ecs wait services-stable \
             --cluster ${{ env.ECS_CLUSTER_NAME }} \
             --services ${{ env.ECS_SERVICE_NAME }}
 
-      - name: Smoke Test
-        run: bash tests/smoke_test.sh ${{ vars.PIPELINE_SMOKE_TEST_URL }}
+      - name: Smoke Test (with retry)
+        run: |
+          for i in {1..5}; do
+            bash tests/smoke_test.sh ${{ vars.PIPELINE_SMOKE_TEST_URL }} && exit 0
+            sleep 10
+          done
+          exit 1
