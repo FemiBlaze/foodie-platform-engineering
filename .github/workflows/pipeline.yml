@@ -55,7 +55,7 @@ jobs:
         run: npm install
         working-directory: app
 
-      # Run Snyk scan in correct directory
+      # Run Snyk scan in correct directory.
       - name: Run Snyk
         uses: snyk/actions/node@master
         with:
