@@ -71,6 +71,8 @@ jobs:
         run: |
           IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
 
+          echo "Using IMAGE_URI: $IMAGE_URI"
+
           docker tag foodie-app:latest $IMAGE_URI:${{ steps.version.outputs.version }}
           docker tag foodie-app:latest $IMAGE_URI:${{ steps.version.outputs.commit_sha }}
 
