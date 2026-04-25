@@ -93,4 +93,22 @@ resource "aws_iam_role_policy_attachment" "ecr_attach" {
   policy_arn = aws_iam_policy.ecr_push.arn
 }
 
-# Note: github_actions_policy was removed - it duplicated ecs_deploy and ecr_push permissions
+resource "aws_iam_policy" "pass_role" {
+  name = "github-actions-passrole-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = "iam:PassRole",
+        Resource = "arn:aws:iam::116248808392:role/foodie-ecs-task-execution-role"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "passrole_attach" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.pass_role.arn
+} 
