@@ -24,15 +24,15 @@ resource "aws_iam_role" "github_actions" {
       {
         Effect = "Allow",
         Principal = {
-          Federated = "arn:aws:iam::116248808392:oidc-provider/${var.github_oidc_provider_url}"
+          Federated = aws_iam_openid_connect_provider.github.arn
         },
         Action = "sts:AssumeRoleWithWebIdentity",
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          }
+          },
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:${var.github_repo_owner}/${var.github_repo_name}:ref:refs/heads/${var.github_repo_branch}"
+            "token.actions.githubusercontent.com:sub" = "repo:${var.github_repo_owner}/${var.github_repo_name}:*"
           }
         }
       }

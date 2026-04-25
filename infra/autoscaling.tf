@@ -1,7 +1,7 @@
 resource "aws_appautoscaling_target" "ecs" {
-  depends_on         = [aws_ecs_service.foodie]
-  max_capacity       = var.autoscaling_max_capacity
-  min_capacity       = var.autoscaling_min_capacity
+  depends_on   = [aws_ecs_service.foodie]
+  max_capacity = var.autoscaling_max_capacity
+  min_capacity = var.autoscaling_min_capacity
 
   resource_id        = "service/${aws_ecs_cluster.foodie.name}/${aws_ecs_service.foodie.name}"
   scalable_dimension = "ecs:service:DesiredCount"
@@ -9,8 +9,8 @@ resource "aws_appautoscaling_target" "ecs" {
 }
 
 resource "aws_appautoscaling_policy" "cpu" {
-  name               = "foodie-cpu-scaling"
-  policy_type        = "TargetTrackingScaling"
+  name        = "foodie-cpu-scaling"
+  policy_type = "TargetTrackingScaling"
 
   resource_id        = aws_appautoscaling_target.ecs.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
@@ -29,8 +29,8 @@ resource "aws_appautoscaling_policy" "cpu" {
 }
 
 resource "aws_appautoscaling_policy" "memory" {
-  name               = "foodie-memory-scaling"
-  policy_type        = "TargetTrackingScaling"
+  name        = "foodie-memory-scaling"
+  policy_type = "TargetTrackingScaling"
 
   resource_id        = aws_appautoscaling_target.ecs.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension

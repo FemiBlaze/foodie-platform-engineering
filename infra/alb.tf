@@ -7,7 +7,7 @@ resource "aws_lb" "foodie" {
 }
 
 resource "aws_lb_target_group" "foodie" {
-  name_prefix = "fd-"   
+  name_prefix = "fd-"
   port        = var.ecs_container_port
   protocol    = var.alb_target_group_protocol
   vpc_id      = aws_vpc.foodie.id

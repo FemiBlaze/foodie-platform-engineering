@@ -59,7 +59,7 @@ variable "github_repo_name" {
 }
 
 variable "github_repo_branch" {
-  description = "GitHub repository branch used in OIDC subject condition"
+  description = "GitHub branch used in OIDC subject condition"
   default     = "main"
 }
 
