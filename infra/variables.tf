@@ -33,6 +33,11 @@ variable "github_oidc_thumbprint" {
   default     = "6938fd4d98bab03faadb97b34396831e3780aea1"
 }
 
+variable "github_oidc_provider_arn" {
+  description = "OIDC provider ARN for GitHub Actions role trust policy"
+  default     = "arn:aws:iam::116248808392:oidc-provider/token.actions.githubusercontent.com"
+}
+
 variable "github_oidc_role_name" {
   description = "IAM role name for GitHub Actions OIDC"
   default     = "github-actions-oidc-role"
@@ -275,4 +280,48 @@ variable "new_relic_license_key" {
 
 variable "new_relic_app_name" {
   default = "foodie-app"
+}
+
+# Autoscaling variables
+variable "autoscaling_max_capacity" {
+  description = "Maximum capacity for ECS autoscaling"
+  type        = number
+  default     = 5
+}
+
+variable "autoscaling_min_capacity" {
+  description = "Minimum capacity for ECS autoscaling"
+  type        = number
+  default     = 2
+}
+
+variable "autoscaling_cpu_target" {
+  description = "CPU target utilization percentage for autoscaling"
+  type        = number
+  default     = 50
+}
+
+variable "autoscaling_memory_target" {
+  description = "Memory target utilization percentage for autoscaling"
+  type        = number
+  default     = 70
+}
+
+variable "autoscaling_scale_in_cooldown" {
+  description = "Cooldown period in seconds after scale in"
+  type        = number
+  default     = 60
+}
+
+variable "autoscaling_scale_out_cooldown" {
+  description = "Cooldown period in seconds after scale out"
+  type        = number
+  default     = 30
+}
+
+# Logging variables
+variable "log_retention_days" {
+  description = "CloudWatch Logs retention in days"
+  type        = number
+  default     = 7
 }
