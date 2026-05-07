@@ -121,10 +121,17 @@ jobs:
 
       - name: Deploy to Amazon ECS
         run: |
+          NEW_TASK_REVISION=$(aws ecs describe-task-definition \
+            --task-definition foodie-task \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "Deploying task definition: $NEW_TASK_REVISION"
+
           aws ecs update-service \
             --cluster ${{ env.ECS_CLUSTER_NAME }} \
             --service ${{ env.ECS_SERVICE_NAME }} \
-            --force-new-deployment
+            --task-definition $NEW_TASK_REVISION
 
       - name: Wait for deployment
         run: |

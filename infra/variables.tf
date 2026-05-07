@@ -103,11 +103,6 @@ variable "ecs_container_name" {
   default     = "foodie-container"
 }
 
-variable "ecs_image_tag" {
-  description = "Tag for the ECS container image (fallback - pipeline uses dynamic versioning)"
-  default     = "v1"
-}
-
 variable "pipeline_docker_image_name" {
   description = "Docker image name used by the CI/CD pipeline"
   default     = "foodie-app"
