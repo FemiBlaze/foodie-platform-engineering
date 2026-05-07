@@ -141,7 +141,7 @@ variable "ecs_launch_type" {
 
 variable "new_relic_sidecar_image" {
   description = "New Relic sidecar image"
-  default     = "newrelic/infrastructure:3.2"
+  default     = "newrelic/infrastructure-bundle:latest"
 }
 
 variable "awslogs_stream_prefix" {
