@@ -92,7 +92,7 @@ main() {
     # Check if URL is provided
     if [ -z "$SMOKE_TEST_URL" ]; then
         log_error "Usage: $0 <url>"
-        log_error "Example: $0 https://foodie-alb-1644305675.eu-west-1.elb.amazonaws.com"
+        log_error "Example: $0 https://foodie-alb-1608933836.eu-west-1.elb.amazonaws.com"
         exit 1
     fi
     
