@@ -142,7 +142,7 @@ jobs:
       - name: Smoke Test (with retry)
         run: |
           for i in {1..5}; do
-            bash tests/smoke_test.sh ${{ vars.PIPELINE_SMOKE_TEST_URL }} && exit 0
+            bash tests/smoke-test.sh ${{ vars.PIPELINE_SMOKE_TEST_URL }} && exit 0
             sleep 10
           done
           exit 1
