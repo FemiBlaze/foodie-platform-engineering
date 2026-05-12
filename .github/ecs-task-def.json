@@ -1,0 +1,33 @@
+{
+  "family": "foodie-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "YOUR_EXECUTION_ROLE_ARN",
+
+  "containerDefinitions": [
+    {
+      "name": "foodie-container",
+      "image": "PLACEHOLDER",
+
+      "essential": true,
+
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/foodie",
+          "awslogs-region": "eu-west-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
