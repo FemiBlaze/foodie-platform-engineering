@@ -105,7 +105,10 @@ foodie-platform-engineering/
 │   ├── 02-ecs-service-healthy.png
 │   ├── 03-alb-target-group-healthy.png
 │   ├── 04-foodie-live-application.png
-│   └── 05-newrelic-observability-dashboard.png
+│   ├── 05-newrelic-observability-dashboard.png
+│   ├── 06-app-homepage.png
+│   └── 07-app-login-page.png
+│
 │
 └── README.md                     # Project overview and instructions
 ```
